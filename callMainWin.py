@@ -29,42 +29,52 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
         
     def __checkNumber(self, str):
         lenNum = len(str)
+        if lenNum == 0:
+            return -2
         for i in range(0,  lenNum):
             if self.numberLineEdit.text()[i:i+1] <"0" or self.numberLineEdit.text()[i:i+1] >"9":
-                return False
-        return True
+                return -1
+        return 0
         
     def setNumber(self):
-        if self.__checkNumber(self.numberLineEdit.text()):
+        t = self.__checkNumber(self.numberLineEdit.text())
+        if  t== 0:
             if(int(self.numberLineEdit.text()) > 1000):
                 self.__msg("警告", "一次作业超过1000题了，孩子们需要减负")
                 self.numberLineEdit.setText("300")
             else:
                 self.number = int(self.numberLineEdit.text())
-        else:
+        elif t == -1:
             self.__msg("警告", "请不要输入非数字字符")
+            self.numberLineEdit.setText("300")
+        else:
+            self.__msg("警告", "出题数未输入")
             self.numberLineEdit.setText("300")
     
     def __msg(self,  title, message):
         QMessageBox.warning(self, title, message, QMessageBox.Ok)
     
     def setRange(self):
-        if self.__checkNumber(self.rangeLineEdit.text()) :
+        t = self.__checkNumber(self.rangeLineEdit.text())
+        if t == 0 :
             if(int(self.rangeLineEdit.text()) > 1000):
                 self.__msg("警告", "数字太大了，孩子们会觉得题目很难")
                 self.rangeLineEdit.setText("100")
             else:
                 self.numRange = int(self.rangeLineEdit.text())
-        else:
+        elif t == -1:
             self.__msg("警告", "请不要输入非数字字符")
+            self.rangeLineEdit.setText("100")
+        else:
+            self.__msg("警告", "运算数范围未输入")
             self.rangeLineEdit.setText("100")
     
     def setReminder(self):
         self.have_remainder = self.checkBox.isChecked()
     
     def produceQuestion(self):
-        if self.__checkNumber(self.rangeLineEdit.text()) :
-            if self.__checkNumber(self.numberLineEdit.text()):
+        if self.__checkNumber(self.rangeLineEdit.text()) == 0:
+            if self.__checkNumber(self.numberLineEdit.text()) == 0:
                 self.first_num.clear()
                 self.second_num.clear()
                 self.answer.clear()
