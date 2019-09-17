@@ -32,7 +32,7 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
         if lenNum == 0:
             return -2
         for i in range(0,  lenNum):
-            if self.numberLineEdit.text()[i:i+1] <"0" or self.numberLineEdit.text()[i:i+1] >"9":
+            if str[i:i+1] <"0" or str[i:i+1] >"9":
                 return -1
         return 0
         
@@ -121,6 +121,7 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
         if(self.questionTextEdit.toPlainText() == ""):
             self.__msg("警告", "请先单击出题按钮")
         else:
+            self.answerTextEdit.clear()
             for i in range(0,  self.number):
                 if self.reminder_list[i] == -1:
                     self.answerTextEdit.append(str(i+1)+"  "+str(self.answer[i]))
