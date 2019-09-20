@@ -14,6 +14,8 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
     answer = []
     operator_list = []
     reminder_list = []
+    flag = False
+    first = True
     
     def __init__(self, parent = None):
         super(MyMainWindow, self).__init__(parent)
@@ -44,6 +46,7 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
                 self.numberLineEdit.setText("300")
             else:
                 self.number = int(self.numberLineEdit.text())
+                self.flag = False
         elif t == -1:
             self.__msg("警告", "请不要输入非数字字符")
             self.numberLineEdit.setText("300")
@@ -62,6 +65,7 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
                 self.rangeLineEdit.setText("100")
             else:
                 self.numRange = int(self.rangeLineEdit.text())
+                self.flag = False
         elif t == -1:
             self.__msg("警告", "请不要输入非数字字符")
             self.rangeLineEdit.setText("100")
@@ -71,10 +75,11 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
     
     def setReminder(self):
         self.have_remainder = self.checkBox.isChecked()
+        self.flag = False
     
     def produceQuestion(self):
         if self.__checkNumber(self.rangeLineEdit.text()) == 0:
-            if self.__checkNumber(self.numberLineEdit.text()) == 0:
+            if self.__checkNumber(self.numberLineEdit.text()) == 0 :
                 self.first_num.clear()
                 self.second_num.clear()
                 self.answer.clear()
@@ -116,10 +121,15 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
                             self.first_num.append(self.answer[i] * self.second_num[i])
                             self.reminder_list.append(-1)
                     self.questionTextEdit.append(str(i+1)+"  "+str(self.first_num[i])+self.operator_list[i]+str(self.second_num[i])+"=")
+                self.flag = True
+                self.first = False
     
     def writeAnswer(self):
-        if(self.questionTextEdit.toPlainText() == ""):
-            self.__msg("警告", "请先单击出题按钮")
+        if(not self.flag):
+            if self.first :
+                self.__msg("警告", "请先单击出题按钮")
+            else:
+                self.__msg("警告", "您刚才编辑了属性，请再次单击出题按钮")
         else:
             self.answerTextEdit.clear()
             for i in range(0,  self.number):
@@ -130,9 +140,13 @@ class MyMainWindow(QMainWindow,  Ui_MainWindow):
 
     def createFile(self, str):
         fname =QFileDialog.getSaveFileName(self, "导出题目文件", "c:\\", "Normal Text Files (*.txt)")
-        f = open(fname[0], "w")
-        f.write(str)
-        f.close
+        try:
+            f = open(fname[0], "w")
+        except FileNotFoundError:
+            f = ""
+        if(f != ""):
+            f.write(str)
+            f.close
         
     def exportQuestion(self):
         if(self.questionTextEdit.toPlainText() != ""):
